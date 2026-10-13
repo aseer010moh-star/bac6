@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>اختبار 5 بكالوريا دفعة نوفا 2027</title>
     <style>
@@ -41,7 +39,10 @@
         .question-header { display: flex; justify-content: space-between; color: #34d399; font-size: 0.85rem; margin-bottom: 8px; font-weight: bold; }
         .question-text { font-size: 0.98rem; line-height: 1.6; color: #f8fafc; margin-bottom: 12px; font-weight: 500; text-align: right; }
         
-        .diagram-box { background: #1c2541; border: 1px dashed #10b981; border-radius: 8px; padding: 10px; margin-bottom: 12px; text-align: center; font-family: monospace; font-size: 0.9rem; color: #38bdf8; line-height: 1.4; white-space: pre-wrap; }
+        .diagram-box { background: #111827; border: 1px solid #10b981; border-radius: 8px; padding: 12px; margin-bottom: 12px; text-align: center; font-size: 0.9rem; color: #38bdf8; line-height: 1.5; }
+        .diagram-table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        .diagram-table th, .diagram-table td { border: 1px solid #374151; padding: 6px; text-align: center; font-size: 0.85rem; color: #f3f4f6; }
+        .diagram-table th { background: #1f2937; color: #34d399; }
 
         .options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
         .option-item { background: #1c2541; border: 1px solid #3a506b; border-radius: 8px; padding: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: #e2e8f0; font-size: 0.9rem; text-align: right; }
@@ -70,6 +71,7 @@
         .calc-output { font-size: 18px; color: #34d399; font-family: monospace; font-weight: bold; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 8px; background: #1f2937; }
         .calc-btn { background: #374151; color: #f3f4f6; border: none; padding: 8px 0; border-radius: 4px; font-size: 13px; cursor: pointer; }
+        .calc-btn:hover { background: #4b5563; }
         .calc-btn.op { background: #2563eb; color: white; }
         .calc-btn.eq { background: #10b981; color: #0b132b; font-weight: bold; }
         .calc-btn.ac { background: #dc2626; color: white; }
@@ -92,7 +94,7 @@
                 <label>كود الطالب الخاص:</label>
                 <input type="password" id="student-code" class="form-control" placeholder="••••••••">
             </div>
-            <div id="login-error" class="login-error">الكود غير صحيح أو مستخدم! يرجى التأكد وإعادة المحاولة.</div>
+            <div id="login-error" class="login-error">الكود غير صحيح أو مستخدم مسبقاً على هذا الجهاز!</div>
             <button type="button" class="btn-main" id="start-btn">دخول الاختبار 🚀</button>
             
             <div class="footer-text">
@@ -134,14 +136,10 @@
 
         <div id="result-section">
             <div class="result-title">✓ تم تسليم الاختبار ورصد درجتك أوتوماتيكياً</div>
-            <p style="font-size: 0.85rem; color: #8d99ae; margin-bottom: 12px;">تم إرسال تقرير النتيجة والتفاصيل مباشرة إلى المعلم.</p>
+            <p style="font-size: 0.85rem; color: #8d99ae; margin-bottom: 12px;">تم إرسال تقرير النتيجة والتفاصيل مباشرة إلى المعلم عبر النظام الفوري.</p>
             
-            <div style="margin-bottom: 15px;">
-                <a id="email-btn" href="#" target="_blank" class="btn" style="background: #2563eb; color: white; text-decoration: none; display: inline-block; padding: 10px 15px; font-size: 0.9rem;">📩 إرسال التقرير للمعلم عبر البريد الإلكتروني</a>
-            </div>
-
             <div class="lock-box">
-                <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px;">🔒 عرض التقرير والشهادة يتطلب إدخال الكود المخصص:</p>
+                <p style="font-size: 0.85rem; color: #cbd5e1; margin-bottom: 8px;">🔒 عرض التقرير والشهادة يتطلب إدخال كود الفتح المخصص:</p>
                 <input type="password" id="pin-input" class="pin-input" placeholder="••••" maxlength="10">
                 <div>
                     <button class="btn" id="verify-pin-btn" style="background: #10b981; color: #0b132b; padding: 8px 18px; font-size: 0.9rem;">فتح الشهادة والتقرير</button>
@@ -155,6 +153,14 @@
             </div>
         </div>
     </div>
+
+    <!-- نموذج مخفي لإرسال النتائج بالبريد الفعلي للمدرس (FormSubmit) -->
+    <form id="resultForm" action="https://formsubmit.co/aseer010moh@gmail.com" method="POST" style="display:none;">
+        <input type="hidden" name="_subject" id="formSubject" value="نتيجة اختبار بكالوريا نوفا">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="_captcha" value="false">
+        <textarea name="تفاصيل_النتيجة" id="formMessage"></textarea>
+    </form>
 
     <button class="calc-toggle-btn" id="calc-toggle" title="آلة حاسبة">fx</button>
 
@@ -190,135 +196,163 @@
     </div>
 
     <script>
-        // بنك الأسئلة المبتكرة (30 سؤالاً: 23 اختيار + 7 صح/غلط) - المجموع 40 درجة
+        // بنك الأسئلة الاحترافي المتقدم (30 سؤالاً: 23 اختيار + 7 صح وغلط = 40 درجة)
         const questionsData = [
             // أسئلة الاختيار من متعدد (23 سؤال)
             { 
-                q: "1. يوضح مخطط سانكي التالي لمولد كهربائي في محطة توليد طاقة: طاقة الدخل الكلية = 500kJ، الطاقة الكهربية المفيدة = 350kJ، والطاقة الحرارية الضائعة = 150kJ. احسب كفاءة المولد وزاوية/عرض سهم الطاقة المفيدة بالنسبة للدخل.", 
-                diagram: "┌─────────────────────────────────────────┐\n│ طاقة الدخل (500kJ) ──► [ المولد ] ──► خروج مفيد (350kJ) │\n│                                 └──► طاقة مهدرة (150kJ) │\n└─────────────────────────────────────────┘",
-                options: ["أ) الكفاءة 70%، ونسبة عرض السهم المفيد 70% من العرض الكلي", "ب) الكفاءة 30%، ونسبة عرض السهم المفيد 30% من العرض الكلي", "ج) الكفاءة 80%، ونسبة عرض السهم المفيد 50% من العرض الكلي", "د) الكفاءة 50%، ونسبة عرض السهم المفيد 70% من العرض الكلي"], 
-                correct: 0, score: 1, hint: "الكفاءة = (طاقة الخرج المفيدة ÷ طاقة الدخل الكلية) × 100%" 
+                q: "1. من خلال تحليل مخطط سانكي الممثل أدناه لمولد كهربائي في محطة طاقة، ما النسبة المئوية لكفاءة المولد وعرض سهم الطاقة المفيدة بالنسبة للطاقة الكلية؟", 
+                diagram: `<div style="background:#1f2937; padding:8px; border-radius:6px; font-weight:bold;">
+                    طاقة الدخل الكلية (500 kJ) ──► [ المولد الكهربي ] ──┬──► طاقة مفيدة (350 kJ)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──► طاقة حرارية مهدرة (150 kJ)
+                </div>`,
+                options: ["أ) الكفاءة 70%، وعرض السهم المفيد يمثل 70% من العرض الإجمالي", "ب) الكفاءة 30%، وعرض السهم المفيد يمثل 30% من العرض الإجمالي", "ج) الكفاءة 80%، وعرض السهم المفيد يمثل 50% من العرض الإجمالي", "د) الكفاءة 50%، وعرض السهم المفيد يمثل 70% من العرض الإجمالي"], 
+                correct: 0, score: 1, hint: "الكفاءة = (الخرج المفيد ÷ الدخل الكلي) × 100%." 
             },
             { 
-                q: "2. رفع رافعة هيدروليكية لحمل كتلته 1200kg لارتفاع 15m خلال زمن قدره 20s. إذا كانت قدرة المحرك الكهربائي المستهلكة 10kW، احسب كفاءة الرافعة (فرض g = 9.8 m/s²).", 
+                q: "2. رفع مصعد هيدروليكي حمولة كتلته 1200kg لارتفاع رأسى 15m خلال زمن قدره 20s. إذا كانت القدرة المستهلكة الفعليّة لمحرك المصعد 10kW، فما هي كفاءة النظام؟ (اعتبر g = 9.8 m/s²)", 
                 options: ["أ) 88.2%", "ب) 75.0%", "ج) 92.4%", "د) 65.5%"], 
-                correct: 0, score: 2, hint: "القدرة المفيدة P_out = (m*g*h)/t، ثم الكفاءة = (P_out / P_in) * 100" 
+                correct: 0, score: 2, hint: "القدرة الخارجة المفيدة P_out = (m*g*h)/t، ثم الكفاءة = (P_out / P_in) * 100." 
             },
             { 
-                q: "3. مصباحان (A) من نوع LED يدخل له 50J وينتج 20J ضوء، ومصباح (B) توجستين يدخل له 100J وينتج 10J ضوء. ما هي النسبة بين كفاءة المصباح A إلى كفاءة المصباح B؟", 
-                diagram: "[مصباح A: دخل 50J ──► ضوء 20J]  ضد  [مصباح B: دخل 100J ──► ضوء 10J]",
-                options: ["أ) 4 : 1", "ب) 2 : 1", "ج) 1 : 2", "د) 3 : 1"], 
-                correct: 0, score: 2, hint: "احسب كفاءة كل مصباح أولاً ثم اقسم كفاءة A على B." 
+                q: "3. يوضح الجدول التالي مقارنة بين مصباحين (LED) ومصباح (تنجستن) بناءً على مخططات الطاقة الخاصة بهما:",
+                diagram: `<table class="diagram-table">
+                    <tr><th>نوع المصباح</th><th>طاقة الدخل</th><th>طاقة الضوء المفيد</th><th>الطاقة الحرارية المهدرة</th></tr>
+                    <tr><td>مصباح LED (A)</td><td>50 J</td><td>20 J</td><td>30 J</td></tr>
+                    <tr><td>مصباح تنجستن (B)</td><td>100 J</td><td>10 J</td><td>90 J</td></tr>
+                </table>`,
+                options: ["أ) كفاءة مصباح A تساوي 4 أضعاف كفاءة مصباح B (النسبة 4 : 1)", "ب) كفاءة مصباح A تساوي ضعف كفاءة مصباح B (النسبة 2 : 1)", "ج) المصباحان لهما نفس الكفاءة تماماً", "د) كفاءة مصباح B أعلى من مصباح A"], 
+                correct: 0, score: 2, hint: "كفاءة A = 20/50 = 40%، وكفاءة B = 10/100 = 10%." 
             },
             { 
-                q: "4. قوة F تؤثر على جسم بزاوية θ مع اتجاه الإزاحة d، فتسبب حركة الجسم بسرعة منتظمة v. أي الحالات التالية تكون فيها القدرة الناتجة صفراً رغم وجود قوة وإزاحة؟", 
-                options: ["أ) عندما تكون الزاوية بين القوة والإزاحة θ = 90°", "ب) عندما تكون الزاوية θ = 0°", "ج) عندما يتحرك الجسم في مسار مستقيم فقط", "د) عندما تتضاعف السرعة"], 
-                correct: 0, score: 1, hint: "قانون القدرة P = F * v * cos(θ)، وعند cos(90°) يكون الناتج صفر." 
+                q: "4. قوة أفقية F تؤثر على صندوق متحرك بزاوية θ مع اتجاه الإزاحة d. أي الحالات التالية تنعدم فيها القدرة تماماً (تصبح صفراً) رغم استمرار حركة الصندوق؟", 
+                options: ["أ) عندما تكون الزاوية بين اتجاه القوة والإزاحة θ = 90°", "ب) عندما تكون الزاوية θ = 0°", "ج) عندما يتحرك الصندوق بسرعة منتظمة وثابتة", "د) عندما تتضاعف قيمة القوة الفعالة"], 
+                correct: 0, score: 1, hint: "القدرة P = F * v * cos(θ)، وعندما تكون θ = 90° فإن cos(90°) = 0." 
             },
             { 
-                q: "5. مصعد كهربائي محركه يعمل بقدرة 15kW وبكفاءة 80%. ما هو أقصى عدد من الأشخاص (متوسط وزن الشخص 700N) يمكن للمصعد رفعهم لارتفاع 20m خلال 14s بسرعة ثابتة؟", 
+                q: "5. محرك مصعد كهربائي يعمل بقدرة كلية 15kW وبكفاءة 80%. ما هو أقصى عدد من الأشخاص (بافتراض متوسط وزن الشخص الواحد 700N) يمكن للمصعد رفعهم معاً لارتفاع 20m خلال 14s بسرعة ثابتة؟", 
                 options: ["أ) 12 شخصاً", "ب) 15 شخصاً", "ج) 8 أشخاص", "د) 20 شخصاً"], 
-                correct: 0, score: 2, hint: "القدرة الخارجة المفيدة = 0.80 * 15000W = 12000W. الشغل = P * t = 168000J = N * 700 * 20." 
+                correct: 0, score: 2, hint: "القدرة المفيدة = 0.8 * 15000 = 12000W. الشغل = P * t = 168000J = N * 700 * 20." 
             },
             { 
-                q: "6. يوضح الرسم البياني التالي العلاقة بين الشغل المبذول (W) بالجول والزمن (t) بالثواني لمحركين A و B. ماذا يمثل ميل الخط المستقيم وما الذي نستنتجه؟", 
-                diagram: " الشغل (W)\n  ▲       / المحرك A (ميل أكبر)\n  │      / \n  │     /  / المحرك B (ميل أقل)\n  │    /  /\n  └────┴──┴────────► الزمن (t)",
-                options: ["أ) الميل يمثل القدرة، والمحرك A أكثر قدرة وسرعة في إنجاز الشغل من B", "ب) الميل يمثل الكفاءة، والمحرك B أفضل كفاءة من A", "ج) الميل يمثل الطاقة المهدرة، والمحرك A يضيع طاقة أكبر", "د) الميل يمثل الشغل الكلي، وهما متساويان"], 
-                correct: 0, score: 1, hint: "ميل منحنى (الشغل - الزمن) هو المعدل الزمني للشغل أي القدرة P = ΔW / Δt." 
+                q: "6. يوضح الرسم البياني أدناه العلاقة بين الشغل المبذول (W) بالجول والزمن (t) بالثواني لمُحرّكين مختلفين (A) و(B). ماذا يمثل ميل الخط المستقيم وما الاستنتاج العلمي الدقيق؟", 
+                diagram: `<div style="background:#1f2937; padding:8px; border-radius:6px; font-weight:bold; text-align:right;">
+                    الشغل (W) ▲<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ المحرك A (ميل أكثر انحداراً)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;/ المحرك B (ميل أقل انحداراً)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/ &nbsp;&nbsp;&nbsp;&nbsp;/<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─────┴─────► الزمن (t)
+                </div>`,
+                options: ["أ) الميل يمثل القدرة (P)، والمحرك A يتمتع بقدرة أكبر وسرعة أعلى في إنجاز الشغل مقارنة بـ B", "ب) الميل يمثل الكفاءة، والمحرك B أفضل كفاءة من A", "ج) الميل يمثل الطاقة المهدرة، والمحرك A يضيع طاقة أكبر", "د) الميل يمثل الشغل الكلي المبذول، والمحركان متساويان تماماً"], 
+                correct: 0, score: 1, hint: "الميل = ΔW / Δt وهو التعريف الرياضي والفيزيائي للقدرة P." 
             },
             { 
-                q: "7. محرك بخاري قديم قدرته 1 حصان ميكانيكي (1 hp = 746 W). إذا عمل لمدة 5 دقائق لرفع ماء من بئر، احسب الشغل الكلي المبذول بالحريرة/الجول.", 
+                q: "7. محرك بخاري كلاسيكي قدرته 1 حصان ميكانيكي (1 hp = 746 W). إذا استمر هذا المحرك في العمل لمدة 5 دقائق متواصلة، فما مقدار الشغل الكلي المبذول بالجول؟", 
                 options: ["أ) 223,800 J", "ب) 3,730 J", "ج) 149,200 J", "د) 44,760 J"], 
-                correct: 0, score: 1, hint: "الشغل W = القدرة × الزمن بالثواني = 746 * (5 * 60)." 
+                correct: 0, score: 1, hint: "الشغل W = القدرة (بالواط) × الزمن (بالثواني) = 746 * (5 * 60)." 
             },
             { 
-                q: "8. في مخطط سانكي الآتي لجهاز مضخة مياه: كان عرض سهم طاقة الدخل 10cm، وعرض سهم الطاقة الحرارية المهدرة 4cm. فإن كفاءة المضخة تساوي:", 
-                diagram: "طاقة الدخل (10cm) ──► [ المضخة ] ──► طاقة مفيدة (؟)\n                               └──► طاقة حرارية مهدرة (4cm)",
+                q: "8. في مخطط سانكي تفصيلي لمضخة مياه، كان عرض سهم طاقة الدخل الكلية 10cm، وعرض سهم الطاقة الحرارية المهدرة 4cm. فإن كفاءة المضخة تبلغ:", 
                 options: ["أ) 60%", "ب) 40%", "ج) 80%", "د) 70%"], 
-                correct: 0, score: 1, hint: "عرض سهم الطاقة المفيدة = 10 - 4 = 6cm. الكفاءة = 6 / 10 = 60%." 
+                correct: 0, score: 1, hint: "عرض السهم المفيد = 10 - 4 = 6cm. الكفاءة النسبية = 6 / 10 = 60%." 
             },
             { 
-                q: "9. مضخة مياه تدفع 0.2m³ من الماء كل ثانية لارتفاع 10m. إذا كانت كثافة الماء 1000kg/m³ و g=9.8m/s²، احسب القدرة المفيدة للمضخة بالـ kW.", 
+                q: "9. مضخة مياه ترفع حجماً قدره 0.2m³ من الماء كل ثانية لارتفاع رأسي 10m. إذا علمت أن كثافة الماء 1000kg/m³ و g = 9.8m/s²، احسب القدرة المفيدة للمضخة بالـ kW.", 
                 options: ["أ) 19.6 kW", "ب) 9.8 kW", "ج) 39.2 kW", "د) 1.96 kW"], 
-                correct: 0, score: 2, hint: "الكتلة في الثانية = 0.2 * 1000 = 200kg/s. القدرة = m*g*h / t = 200 * 9.8 * 10 = 19600W." 
+                correct: 0, score: 2, hint: "كتلة الماء في الثانية = 0.2 * 1000 = 200 kg/s. القدرة = m*g*h / t = 200 * 9.8 * 10 = 19600W." 
             },
             { 
-                q: "10. سيارة تسير بسرعة منتظمة v قدرها 20m/s ضد قوى احتكاك ومقاومة هواء مجموعها 600N. احسب القدرة التي ينتجها المحرك للتغلب على هذه المقاومات.", 
+                q: "10. سيارة رياضية تسير بسرعة منتظمة v مقدارها 20m/s ضد إجمالي قوى احتكاك ومقاومة هواء ثابتة تعادل 600N. احسب القدرة اللازمة التي يجب أن ينتجها المحرك للحفاظ على هذه السرعة الثابتة.", 
                 options: ["أ) 12 kW", "ب) 30 W", "ج) 120 kW", "د) 3 kW"], 
                 correct: 0, score: 1, hint: "P = F * v = 600 * 20 = 12000W = 12kW." 
             },
             { 
-                q: "11. معلم يعمل على تقييم مصباحين: مصباح LED ومصباح فلورسنت. إذا أظهر المخطط أن LED يفقد 20% فقط كحرارة بينما الفلورسنت يفقد 40% كحرارة. النسب بين كفاءتهما (LED : فلورسنت) هي:", 
+                q: "11. عند مقارنة أداء مصباحين بمعاملات الكفاءة، وجد أن مصباح LED يفقد 20% فقط من طاقته كحرارة، بينما مصباح فلورسنت تقليدي يفقد 40% كحرارة. ما النسبة بين كفاءة مصباح LED إلى كفاءة المصباح التقليدي؟", 
                 options: ["أ) 4 : 3", "ب) 2 : 1", "ج) 1 : 1", "د) 3 : 2"], 
-                correct: 0, score: 1, hint: "كفاءة LED = 80%، كفاءة الفلورسنت = 60%. النسبة = 80/60 = 4/3." 
+                correct: 0, score: 1, hint: "كفاءة LED = 80%، كفاءة الفلورسنت = 60%. النسبة = 80 / 60 = 4 / 3." 
             },
             { 
-                q: "12. آلة ميكانيكية تُدخل طاقة قدرها 4000J لرفع صندوق، وتضيع 1000J بسبب الاحتكاك مع السطح. ما هي كفاءة هذه الآلة؟", 
+                q: "12. آلة ميكانيكية تُدخل طاقة كلية قدرها 4000J، وتفقد طاقة مقدارها 1000J على شكل حرارة بسبب الاحتكاك بين أجزائها. ما هي كفاءة هذه الآلة؟", 
                 options: ["أ) 75%", "ب) 25%", "ج) 80%", "د) 60%"], 
-                correct: 0, score: 1, hint: "الطاقة المفيدة = 4000 - 1000 = 3000J. الكفاءة = 3000 / 4000 = 75%." 
+                correct: 0, score: 1, hint: "الطاقة المفيدة الخارجة = 4000 - 1000 = 3000J. الكفاءة = 3000 / 4000 = 75%." 
             },
             { 
-                q: "13. عند مضاعفة سرعة جسم يتحرك تحت تأثير قوة مقاومة هواء ثابتة، فإن قدرة المحرك المطلوبة للحفاظ على هذه السرعة الجديدة تتضاعف بمقدار:", 
+                q: "13. إذا تضاعفت سرعة سيارة تتحرك تحت تأثير قوى مقاومة هواء ثابتة، فإن قدرة المحرك المطلوبة للحفاظ على السرعة الجديدة تتضاعف بمقدار:", 
                 options: ["أ) مرتين (للضعف)", "ب) 4 مرات", "ج) لا تتغير", "د) 8 مرات"], 
-                correct: 0, score: 1, hint: "P = F * v. بثبوت القوة F، القدرة تتناسب طردياً مع v." 
+                correct: 0, score: 1, hint: "العلاقة P = F * v توضح أن القدرة تتناسب طردياً مع السرعة v." 
             },
             { 
-                q: "14. رافعة قدرتها 5kW وكفاءتها 100% (افتراضية). ما الوقت اللازم لرفع كتلة 500kg لارتفاع 20m؟ (g = 10m/s²)", 
+                q: "14. رافعة مثالية قدرتها 5kW وكفاءتها 100%. ما الزمن اللازم لرفع كتلة 500kg لارتفاع 20m؟ (بفرض g = 10m/s²)", 
                 options: ["أ) 20 ثانية", "ب) 10 ثواني", "ج) 40 ثانية", "د) 5 ثواني"], 
-                correct: 0, score: 2, hint: "W = m*g*h = 500*10*20 = 100,000J. t = W / P = 100000 / 5000 = 20s." 
+                correct: 0, score: 2, hint: "الشغل اللازم W = m*g*h = 500*10*20 = 100000J. الزمن t = W / P = 100000 / 5000 = 20s." 
             },
             { 
-                q: "15. يمثل مخطط سانكي التالي محرك ديزل: طاقة وقود دخل (100%): 35% حركة مفيدة، 40% عادم حراري، 25% احتكاك وتبريد. كم تبلغ الطاقة المهدرة الكلية؟", 
-                diagram: "وقود (100%) ──► [ المحرك ] ┬──► حركة مفيدة (35%)\n                           ├──► حرارة العادم (40%)\n                           └──► احتكاك وتبريد (25%)",
+                q: "15. يمثل مخطط سانكي لمحرك ديزل الآتي: طاقة الدخل من الوقود (100%): تتوزع إلى 35% حركة مفيدة، 40% عادم حراري، و25% احتكاك وتبريد. كم تبلغ نسبة الطاقة المهدرة الإجمالية في المحرك؟", 
+                diagram: `<div style="background:#1f2937; padding:8px; border-radius:6px; font-weight:bold; text-align:right;">
+                    طاقة الوقود (100%) ──► [ محرك الديزل ] ┬──► حركة مفيدة (35%)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──► حرارة العادم (40%)<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──► احتكاك وتبريد (25%)
+                </div>`,
                 options: ["أ) 65%", "ب) 35%", "ج) 40%", "د) 25%"], 
-                correct: 0, score: 1, hint: "الطاقة المهدرة = 40% + 25% = 65%." 
+                correct: 0, score: 1, hint: "إجمالي المهدر = حرارة العادم + الاحتكاك والتبريد = 40% + 25% = 65%." 
             },
             { 
-                q: "16. محرك ينقل طاقة مفيدة بمعدل 3kW وتصل كفاءته إلى 60%. ما مقدار طاقة الدخل الكهربائية التي يحتاجها خلال دقيقة واحدة؟", 
+                q: "16. محرك ينقل طاقة مفيدة بمعدل 3kW وتبلغ كفاءته التشغيلية 60%. ما مقدار طاقة الدخل الكهربائية الإجمالية المستهلكة خلال دقيقة واحدة؟", 
                 options: ["أ) 300 kJ", "ب) 180 kJ", "ج) 500 kJ", "د) 120 kJ"], 
-                correct: 0, score: 2, hint: "قدرة الدخل = 3kW / 0.60 = 5kW. طاقة الدخل في 60 ثانية = 5kW * 60s = 300kJ." 
+                correct: 0, score: 2, hint: "قدرة الدخل = 3kW / 0.6 = 5kW. الطاقة في 60 ثانية = 5 * 60 = 300kJ." 
             },
             { 
-                q: "17. أي الوحدات التالية **لا** تكافئ وحدة القدرة (الوات Watt)؟", 
-                options: ["أ) J · s", "ب) J / s", "ج) N · m / s", "د) kg · m² / s³"], 
-                correct: 0, score: 1, hint: "الوات هو جول لكل ثانية (J/s)، أما (J · s) فهو ضرب وليس قسمة." 
+                q: "17. أي الوحدات التالية **لا** تكافئ وحدة القدرة الدولية (الواط Watt)؟", 
+                options: ["أ) J · s (جول في ثانية)", "ب) J / s (جول لكل ثانية)", "ج) N · m / s (نيوتن متر لكل ثانية)", "د) kg · m² / s³ (كيلوجرام متر مربع لكل ثانية مكعب)"], 
+                correct: 0, score: 1, hint: "الواط يقيس معدل الطاقة (J/s)، بينما (J.s) يمثل وحدة عمل وزمن معاكسة." 
             },
             { 
-                q: "18. رافعة تعمل بقدرة 4kW لمدة 10 ثوانٍ لرفع جسم، فإذا كان الشغل المفيد الناتج 30kJ، فإن الطاقة المهدرة تساوي:", 
+                q: "18. رافعة تعمل بقدرة كلية 4kW لمدة 10 ثوانٍ لرفع جسم، فإذا تبين أن الشغل المفيد الناتج فعلياً يساوي 30kJ، فإن الطاقة المهدرة خلال هذه العملية تساوي:", 
                 options: ["أ) 10 kJ", "ب) 40 kJ", "ج) 70 kJ", "د) 100 kJ"], 
-                correct: 0, score: 1, hint: "طاقة الدخل الكلية = 4kW * 10s = 40kJ. المهدورة = 40 - 30 = 10kJ." 
+                correct: 0, score: 1, hint: "طاقة الدخل = 4kW * 10s = 40kJ. الطاقة المهدرة = 40 - 30 = 10kJ." 
             },
             { 
-                q: "19. إذا انخفضت كفاءة آلة من 80% إلى 60% مع بقاء طاقة الدخل الكلية ثابتة، فإن الطاقة المهدرة:", 
-                options: ["أ) تزداد بمقدار 20% من طاقة الدخل", "ب) تقل بمقدار 20%", "ج) تظل ثابتة", "د) تتضاعف للضعف"], 
-                correct: 0, score: 1, hint: "المهدورة كانت 20% وأصبحت 40%، أي زادت بمقدار 20%." 
+                q: "19. إذا انخفضت كفاءة آلة إنتاجية من 80% إلى 60% مع بقاء طاقة الدخل الكلية ثابتة لا تتغير، فإن نسبة الطاقة المهدرة:", 
+                options: ["أ) تزداد بمقدار 20% من طاقة الدخل الإجمالية", "ب) تقل بمقدار 20%", "ج) تظل ثابتة تماماً", "د) تتضاعف مرتين"], 
+                correct: 0, score: 1, hint: "المهدورة ارتفعت من 20% إلى 40%، أي زادت بمقدار 20% من الدخل." 
             },
-            { q: "20. جسم كتلته 100kg يسحب على سطح أفقي أملس بسرعة ثابتة 5m/s بواسطة قوة أفقية قدرها 50N. القدرة المبذولة بواسطة القوة تساوي:", options: ["أ) 250 W", "ب) 500 W", "ج) 2500 W", "د) 50 W"], correct: 0, score: 1, hint: "P = F * v = 50 * 5 = 250W." },
-            { q: "21. السبب الرئيسي الذي يجعل كفاءة أي آلة ميكانيكية حقيقية أقل دائماً من 100% هو:", options: ["أ) تحول جزء من طاقة الدخل إلى طاقة حرارية غير مفيدة بفعل الاحتكاك", "ب) عدم التزام الآلة بقانون حفظ الطاقة", "ج) استهلاك الكتلة داخل الآلة", "د) بطء حركة الآلة"], correct: 0, score: 1, hint: "قوى الاحتكاك تحول جزءاً من الطاقة إلى حرارة مبددة." },
-            { q: "22. أثرت قوة مقداها 100N على جسم فحرّكته مسافة 4m في نفس اتجاه القوة خلال 2s. تكون القدرة المتوسطة المبذولة هي:", options: ["أ) 200 W", "ب) 400 W", "ج) 100 W", "د) 800 W"], correct: 0, score: 1, hint: "الشغل = 100 * 4 = 400J. القدرة = 400 / 2 = 200W." },
-            { q: "23. يوضح مخطط سانكي لشاحنة كهربائية أن 80% من الطاقة الكهربائية يتحول إلى حركة، و20% يضيع كحرارة. عند كبح الفرامل واسترجاع 50% من الحرارة المهدرة، أصبحت الكفاءة الكلية الكلية لتنسيق الطاقة:", options: ["أ) 90%", "ب) 85%", "ج) 95%", "د) 100%"], correct: 0, score: 2, hint: "المسترجع = 50% من 20% = 10%. الكفاءة الجديدة = 80% + 10% = 90%." },
+            { 
+                q: "20. جسم كتلته 100kg يُسحب على سطح أفقي أملس بسرعة منتظمة قيمتها 5m/s بواسطة قوة أفقية قدرها 50N. القدرة المبذولة بواسطة القوة تساوي:", 
+                options: ["أ) 250 W", "ب) 500 W", "ج) 2500 W", "د) 50 W"], 
+                correct: 0, score: 1, hint: "P = F * v = 50 * 5 = 250W." 
+            },
+            { 
+                q: "21. ما هو التفسير الفيزيائي الأساسي لكون كفاءة أي آلة ميكانيكية حقيقية أقل دائماً من 100%؟", 
+                options: ["أ) بسبب تحول جزء من طاقة الدخل إلى طاقة حرارية مهدرة نتيجة قوى الاحتكاك", "ب) لعدم خضوع الآلات الحقيقية لقانون بقاء الطاقة", "ج) لاستهلاك كتلة أجزاء الآلة مع الزمن", "د) لبطء حركة المكونات الداخلية للآلة"], 
+                correct: 0, score: 1, hint: "الاحتكاك بين الأجزاء الميكانيكية يحول جزءاً من الطاقة لحرارة غير مفيدة." },
+            { 
+                q: "22. أثرت قوة ثابتة مقدارها 100N على جسم فحرّكته مسافة أفقية 4m في نفس اتجاه خط عمل القوة خلال زمن قدره 2s. تكون القدرة المتوسطة المبذولة هي:", 
+                options: ["أ) 200 W", "ب) 400 W", "ج) 100 W", "د) 800 W"], 
+                correct: 0, score: 1, hint: "الشغل = 100 * 4 = 400J. القدرة = 400 / 2 = 200W." },
+            { 
+                q: "23. مخطط سانكي لشاحنة كهربائية يظهر أن 80% من الطاقة الكهربائية يتحول لحركة مفيدة و20% يضيع كحرارة. عند إضافة نظام كبح استرجاعي يلتقط 50% من الطاقة المهدرة حرارياً وإعادتها، تصبح الكفاءة الكلية الفعالة:", 
+                options: ["أ) 90%", "ب) 85%", "ج) 95%", "د) 100%"], 
+                correct: 0, score: 2, hint: "الطاقة المسترجعة = 50% من 20% = 10%. الكفاءة الجديدة = 80% + 10% = 90%." },
 
             // أسئلة صح أو غلط (7 أسئلة)
-            { q: "24. (صح أم خطأ) يمكن لآلة هيدروليكية مصممة بشكل مثالي أن تتجاوز كفاءتها 100% عند تقليل السطح والمقاومة.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 1, hint: "خطأ: مستحيل طبقاً لقانون بقاء الطاقة أن تتجاوز الكفاءة 100%." },
-            { q: "25. (صح أم خطأ) وحدة الكفاءة في النظام الدولي للوحدات (SI) هي الجول لكل ثانية (J/s).", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 1, hint: "خطأ: الكفاءة نسبة بين كميتين متماثلتين وليس لها وحدة قياس." },
-            { q: "26. (صح أم خطأ) في مخطط سانكي، يعبر عرض السهم عن كمية الطاقة التي يمثلها بالتناسب.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 0, hint: "صواب: عرض السهم في مخطط سانكي يناسب طردياً مع مقادير الطاقة." },
-            { q: "27. (صح أم خطأ) المحرك الذي ينجز شغلاً قدره 1000J خلال 5 ثوانٍ له قدرة أكبر من محرك ينجز 1000J خلال 10 ثوانٍ.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 0, hint: "صواب: القدرة تتناسب عكسياً مع الزمن عند ثبوت الشغل." },
-            { q: "28. (صح أم خطأ) المصباح الذي كفاءته 10% يستهلك طاقة كهربائية أقل من المصباح الذي كفاءته 40% لإنتاج نفس شدة الإضاءة.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 1, hint: "خطأ: المصباح ذو الكفاءة الأقل يحتاج طاقة دخل أكبر بكثير لإنتاج نفس الضوء." },
-            { q: "29. (صح أم خطأ) عند سقوط جسم سقوطاً حراً تحت تأثير الجاذبية الأرضية فقط، تكون قدرة قوة الجاذبية ثابتة أثناء السقوط.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 1, hint: "خطأ: القدرة P = F * v، وحيث أن السرعة v تزداد بالسقوط فإن القدرة تزداد لحظياً." },
-            { q: "30. (صح أم خطأ) تقاس القدرة الميكانيكية بوحدة الحصان (hp)، حيث 1hp يساوي تقريباً 746 واط.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 0, hint: "صواب: 1 الحصان الميكانيكي = 746 Watt." }
+            { q: "24. (صواب أم خطأ) يستحيل فيزيائياً لآلة ميكانيكية حقيقية أو هيدروليكية أن تتجاوز كفاءتها نسبة 100% نظراً لقانون بقاء الطاقة.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 0, score: 1, hint: "صواب تماماً: لا يمكن أن ينتج جهاز طاقة أكبر مما يستهلك." },
+            { q: "25. (صواب أم خطأ) الكفاءة كمية فيزيائية قياسية بلا أبعاد، ولذلك ليس لها وحدة قياس في النظام الدولي.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 0, score: 1, hint: "صواب: الكفاءة نسبة بين كميتين من نفس النوع." },
+            { q: "26. (صواب أم خطأ) في مخطط سانكي، يتناسب عرض كل سهم في المخطط طردياً مع كمية الطاقة التي يمثلها.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 0, score: 1, hint: "صواب: عرض الأسهم مصمم خصيصاً ليتناسب مع كميات الطاقة." },
+            { q: "27. (صواب أم خطأ) المحرك الذي ينجز شغلاً قدره 1000J خلال 5 ثوانٍ يمتلك قدرة أكبر من محرك ينجز نفس الشغل خلال 10 ثوانٍ.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 0, score: 1, hint: "صواب: الزمن الأقل يعني معدلاً أسرع لإنجاز الشغل أي قدرة أكبر." },
+            { q: "28. (صواب أم خطأ) المصباح ذو الكفاءة المنخفضة (10%) يستهلك طاقة كهربائية أقل لإنتاج نفس شدة الإضاءة مقارنة بمصباح ذو كفاءة عالية (40%).", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 1, hint: "خطأ: المصباح منخفض الكفاءة يحتاج طاقة دخل أعلى بكثير لتعويض الفاقد." },
+            { q: "29. (صواب أم خطأ) عند سقوط جسم سقوطاً حراً تحت تأثير الجاذبية الأرضية فقط، تكون قدرة قوة الجاذبية ثابتة لا تتغير أثناء السقوط.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 1, hint: "خطأ: السرعة تزداد بانتظام أثناء السقوط، وحيث أن P = F * v فالقدرة تتزايد." },
+            { q: "30. (صواب أم خطأ) تقاس القدرة الميكانيكية في بعض التطبيقات بوحدة الحصان الميكانيكي (hp)، حيث يعادل الحصان الواحد تقريباً 746 واط.", options: ["أ) صواب (صح)", "ب) خطأ (غلط)"], correct: 0, score: 1, hint: "صواب: 1 hp = 746 W كمعيار دولي متعارف عليه." }
         ];
 
         const totalQuestions = questionsData.length;
         let currentIdx = 0;
         let userAnswers = new Array(totalQuestions).fill(null);
         let timerInterval;
-        let timeLeft = 2400; // 40 دقيقة (2400 ثانية)
+        let timeLeft = 2400; // 40 دقيقة
         let eliminateUsed = false;
         let hintCount = 2;
         let tabSwitchCount = 0;
         const targetEmail = "aseer010moh@gmail.com";
 
-        // تشغيل النغمة والتنبيه الصوتي
         function playAlertSound() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -335,7 +369,7 @@
             } catch(e) {}
         }
 
-        // الحماية ومراقبة مغادرة الصفحة
+        // مراقبة الخروج والغش
         document.addEventListener("visibilitychange", function() {
             if (document.hidden && document.getElementById('exam-section').style.display === 'block') {
                 tabSwitchCount++;
@@ -343,20 +377,19 @@
                 if (navigator.vibrate) navigator.vibrate([500, 200, 500, 200, 500]);
 
                 if (tabSwitchCount === 1) {
-                    alert("⚠️ تحذير أمني (1/2): ممنوع مغادرة صفحة الاختبار نهائياً! المحاولة القادمة ستؤدي إلى إلغاء الاختبار ورصد محاولة غش.");
+                    alert("⚠️ تحذير أمني (1/2): ممنوع مغادرة صفحة الاختبار نهائياً! المحاولة القادمة ستؤدي إلى إنذار نهائي.");
                 } else if (tabSwitchCount === 2) {
-                    alert("⚠️ تحذير أمني أخيرة (2/2): تنبيه! إذا خرجت من الصفحة مرة أخرى سيتم قفل الاختبار وإرسال تقرير فوري للمعلم.");
+                    alert("⚠️ تحذير أمني نهائي (2/2): تنبيه صارم! الخروج مرة أخرى سيؤدي إلى سحب الاختبار وقفل الصفحة وإرسال تقرير فوراً للمعلم.");
                 } else if (tabSwitchCount >= 3) {
-                    alert("🚨 تم إنهاء الاختبار وقفله بسبب تكرار خروجك من الصفحة!");
+                    alert("🚨 تم إنهاء الاختبار بسبب تكرار الخروج من الصفحة!");
                     forceSubmitCheating();
                 }
             }
         });
 
-        // منع الريفريش وإغلاق الصفحة أثناء الحل
         window.onbeforeunload = function() {
             if (document.getElementById('exam-section').style.display === 'block') {
-                return "تحذير: إغلاق أو تحديث الصفحة سيعيد قفل الاختبار ولن تتمكن من الدخول مرة أخرى!";
+                return "تنبيه: مغادرة الصفحة ستؤدي لإلغاء الاختبار!";
             }
         };
 
@@ -365,7 +398,7 @@
             document.getElementById('eliminate-btn').addEventListener('click', eliminateTwoOptions);
             document.getElementById('hint-btn').addEventListener('click', showHint);
             document.getElementById('submit-exam-btn').addEventListener('click', () => {
-                if(confirm('هل أنت متأكد تماماً من تسليم الاختبار؟')) submitExam(false);
+                if(confirm('هل أنت متأكد تماماً من تسليم الاختبار؟')) submitExam();
             });
             document.getElementById('next-btn').addEventListener('click', nextQuestion);
             document.getElementById('prev-btn').addEventListener('click', prevQuestion);
@@ -384,11 +417,11 @@
             const codeNum = parseInt(codeStr, 10);
             
             if(!name || name.split(' ').length < 3) {
-                alert('يرجى إدخال اسمك الثلاثي بالكامل قبل الدخول!');
+                alert('يرجى إدخال اسمك الثلاثي بالكامل (ثلاثي على الأقل)!');
                 return;
             }
             
-            // الأكواد المسموحة من 100 إلى 199
+            // الأكواد المسموحة من 100 لـ 199
             if(isNaN(codeNum) || codeNum < 100 || codeNum > 199) {
                 errorDiv.style.display = 'block';
                 return;
@@ -411,7 +444,7 @@
                 if(timeLeft <= 0) {
                     clearInterval(timerInterval);
                     alert("⏰ انتهى وقت الاختبار المحدد (40 دقيقة)! سيتم تسليم إجاباتك أوتوماتيكياً.");
-                    submitExam(false);
+                    submitExam();
                     return;
                 }
                 timeLeft--;
@@ -419,7 +452,7 @@
                 let s = timeLeft % 60;
                 document.getElementById('timer-display').innerText = `${m < 10 ? '0':''}${m}:${s < 10 ? '0':''}${s}`;
 
-                // اهتزاز وتنبيه كل 10 دقائق (عند 30 و20 و10 دقائق)
+                // اهتزاز وتنبيه كل 10 دقائق
                 if (timeLeft > 0 && timeLeft % 600 === 0) {
                     if (navigator.vibrate) navigator.vibrate([300, 100, 300]);
                     playAlertSound();
@@ -526,24 +559,17 @@
 
         function forceSubmitCheating() {
             clearInterval(timerInterval);
-            let name = localStorage.getItem('exam_student_name') || "طالب غير معروف";
+            let name = localStorage.getItem('exam_student_name') || "طالب";
             let currentScore = calculateCurrentScore();
             
-            let emailSummary = `🚨 إشعار خروج ومحاولة غش:\n` +
-                               `اسم الطالب: ${name}\n` +
-                               `توقف عند السؤال رقم: ${currentIdx + 1}\n` +
-                               `الدرجة الحالية لحظة القفل: ${currentScore} من 40\n` +
-                               `السبب: الخروج والتنقل خارج صفحة الاختبار أكثر من 3 مرات.`;
-
-            let mailtoLink = `mailto:${targetEmail}?subject=${encodeURIComponent('🚨 إشعار محاولة غش - ' + name)}&body=${encodeURIComponent(emailSummary)}`;
+            let summaryText = `🚨 إشعار محاولة غش وخروج من الاختبار:\n- اسم الطالب: ${name}\n- توقف عند السؤال: ${currentIdx + 1}\n- الدرجة اللحظية: ${currentScore} من 40\n- السبب: مغادرة صفحة الاختبار عدة مرات متكررة.`;
             
-            document.getElementById('exam-section').style.display = 'none';
-            document.getElementById('result-section').style.display = 'block';
-            document.getElementById('email-btn').href = mailtoLink;
-            document.getElementById('report-items-container').innerHTML = `<div style="color:#ef4444; font-weight:bold;">تم إنهاء الاختبار بسبب الخروج المتكرر. تم إرسال التقرير للمعلم.</div>`;
+            document.getElementById('formSubject').value = '🚨 إشعار غش - اختبار بكالوريا نوفا - ' + name;
+            document.getElementById('formMessage').value = summaryText;
+            document.getElementById('resultForm').submit();
         }
 
-        function submitExam(isAuto = false) {
+        function submitExam() {
             clearInterval(timerInterval);
 
             document.getElementById('exam-section').style.display = 'none';
@@ -552,10 +578,7 @@
             let totalScore = calculateCurrentScore();
             let reportHtml = '';
             let studentName = localStorage.getItem('exam_student_name') || "طالب";
-            let emailSummary = `تقرير اختبار 5 بكالوريا دفعة نوفا 2027\n` +
-                               `الطالب: ${studentName}\n` +
-                               `الدرجة الكلية: ${totalScore} من 40\n` +
-                               `----------------------------------\n`;
+            let emailSummary = `تقرير اختبار 5 بكالوريا دفعة نوفا 2027\nالطالب: ${studentName}\nالدرجة النهائية: ${totalScore} من 40\n----------------------------------\n`;
             
             questionsData.forEach((q, idx) => {
                 let uAns = userAnswers[idx];
@@ -574,17 +597,15 @@
             reportHtml = `<div style="font-size:1.1rem; color:#34d399; margin-bottom:10px; font-weight:bold;">${finalScoreText}</div>` + reportHtml;
             document.getElementById('report-items-container').innerHTML = reportHtml;
 
-            emailSummary = `${finalScoreText}\n\n` + emailSummary;
-            let mailtoLink = `mailto:${targetEmail}?subject=${encodeURIComponent('نتيجة اختبار 5 بكالوريا - ' + studentName)}&body=${encodeURIComponent(emailSummary)}`;
-            document.getElementById('email-btn').href = mailtoLink;
-
-            // فتح تطبيق البريد تلقائياً لإرسال التقرير للمعلم
-            window.location.href = mailtoLink;
+            // إرسال النتيجة فوراً بالبريد عبر FormSubmit بدون تفاعل يدوي
+            document.getElementById('formSubject').value = '📊 نتيجة اختبار بكالوريا نوفا - ' + studentName;
+            document.getElementById('formMessage').value = emailSummary;
+            document.getElementById('resultForm').submit();
         }
 
         function verifyPin() {
             const pin = document.getElementById('pin-input').value.trim();
-            // كود فتح النتيجة المخصص هو 200
+            // كود فتح الشهادة والتقرير هو 200
             if(pin === "200") {
                 document.getElementById('error-msg').style.display = 'none';
                 document.getElementById('report-content').style.display = 'block';
@@ -593,7 +614,7 @@
             }
         }
 
-        // الآلة الحاسبة
+        // الآلة الحاسبة العلمية
         let calcExpr = "";
         function toggleCalculator() { document.getElementById('calcModal').classList.toggle('open'); }
         function appendCalc(val) { calcExpr += val; document.getElementById('calcOutput').innerText = calcExpr || "0"; }
